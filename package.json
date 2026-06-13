@@ -1,6 +1,6 @@
 {
   "name": "vision-bridge-mcp",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "MCP vision proxy v0.2 — fork-merge of mature vision MCPs. Multi-model fallback, compare_images, cache, CLAUDE.md rules for DeepSeek text in VS Code / Claude Code.",
   "type": "module",
   "bin": {
