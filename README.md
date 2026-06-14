@@ -154,7 +154,33 @@ ollama pull llava
 
 ## MCP Tools 完整说明
 
-### `describe_image`（主工具）
+### `describe_paste` / `describe_paste_batch`（v0.3+，VS Code / Claude Code 首选）
+
+用户 **Ctrl+V 贴截图** 或聊天里出现 `[Unsupported Image]` 时用。
+
+| 工具 | 何时用 |
+|------|--------|
+| `sync_chat_attachments` | 多图：先把 Cursor/VS Code 附件目录同步到 `.ai/inbox` |
+| `describe_paste` | 单张 |
+| `describe_paste_batch` | 多张 |
+| `list_recent_pastes` | 不确定几张时先列 |
+
+返回含 **Markdown 图片预览**（`file://`）+ 旁路模型分析文字。
+
+**Kimi 配置示例（推荐）：**
+
+```json
+"env": {
+  "VISION_BRIDGE_BASE_URL": "https://api.moonshot.cn/v1",
+  "VISION_BRIDGE_API_KEY": "${MOONSHOT_API_KEY}",
+  "VISION_BRIDGE_MODELS": "kimi-k2.5,kimi-k2.6,moonshot-v1-8k-vision-preview",
+  "VISION_BRIDGE_CACHE": "1"
+}
+```
+
+---
+
+### `describe_image`（路径 / URL 回退）
 
 把图片转成详细 Markdown 描述。
 

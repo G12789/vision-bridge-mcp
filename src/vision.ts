@@ -98,6 +98,16 @@ export function imageToDataUrl(absPath: string): string {
   return `data:${mime};base64,${b64}`;
 }
 
+/** Markdown image preview for VS Code / Claude chat tool results */
+export function imagePreviewMarkdown(absPath: string): string {
+  const normalized = absPath.replace(/\\/g, "/");
+  const uri =
+    process.platform === "win32"
+      ? `file:///${normalized}`
+      : `file://${normalized}`;
+  return `![screenshot preview](${uri})\n\n`;
+}
+
 function isRetryable(status: number, body: string): boolean {
   if ([429, 500, 502, 503, 504].includes(status)) return true;
   const lower = body.toLowerCase();
@@ -241,15 +251,22 @@ export const PROMPTS = {
 export const VISION_AUTO_RULES = `## Image / Vision (required for text-only models like DeepSeek)
 
 Your base model CANNOT see images. When the user:
-- attaches or references an image path
-- pastes a screenshot
-- you see \`[Unsupported Image]\` or similar
+- pastes / attaches a screenshot in chat
+- you see \`[Unsupported Image]\` or the user says they sent a picture
+- references any image
 
-You MUST call MCP tool \`describe_image\` (or \`extract_text\` for OCR) BEFORE answering.
-Do NOT use the Read tool on binary images. Do NOT guess pixels.
+You MUST call MCP BEFORE answering (in this order):
+1. Multiple images attached → \`describe_paste_batch\` (NOT describe_paste)
+2. Single paste / [Unsupported Image] → \`describe_paste\`
+3. \`describe_clipboard\` — clipboard only
+4. \`describe_image\` — only if user gave an explicit file path
 
-Example:
-describe_image({ "source": "/absolute/path/to.png", "mode": "ui", "question": "What error is shown?" })
+Do NOT use the Read tool on binary images. Do NOT ask the user to save files manually.
+Do NOT guess pixels.
+
+Examples:
+describe_paste({ "mode": "ui", "question": "What is in this screenshot?" })
+describe_clipboard({ "mode": "general" })
 
 After the tool returns, use the text description as if you saw the image.
-Cached results live in .ai/vision/*.md — reuse when the same image is referenced again.`;
+Cached results live in .ai/vision/*.md.`;
