@@ -18,12 +18,7 @@ import { syncAttachmentsToInbox } from "./attachments.js";
 
 const VERSION = "0.2.3";
 
-export function createVisionBridgeServer(cwd: string): McpServer {
-  const server = new McpServer({
-    name: "vision-bridge-mcp",
-    version: VERSION,
-  });
-
+export function registerVisionBridgeTools(server: McpServer, cwd: string): void {
   const sourceSchema = {
     source: z
       .string()
@@ -451,6 +446,13 @@ export function createVisionBridgeServer(cwd: string): McpServer {
       content: [{ type: "text" as const, text: VISION_AUTO_RULES }],
     }),
   );
+}
 
+export function createVisionBridgeServer(cwd: string): McpServer {
+  const server = new McpServer({
+    name: "vision-bridge-mcp",
+    version: VERSION,
+  });
+  registerVisionBridgeTools(server, cwd);
   return server;
 }
